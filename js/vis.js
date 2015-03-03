@@ -18,27 +18,26 @@
       this.create_nodes = __bind(this.create_nodes, this);
       var max_amount;
       this.data = data;
-      this.width = 940;
-      this.height = 600;
+      this.width = 540;
+      this.height = 400;
+      this.node_radius = this.width / 80;
+      this.currentYear = "1986";
       this.tooltip = CustomTooltip("gates_tooltip", 240);
       this.center = {
         x: this.width / 2,
         y: this.height / 2
       };
       this.year_centers = {
-        "2008": {
+        "import": {
+          x: this.width / 3 * 2,
+          y: this.height / 2
+        },
+        "production": {
           x: this.width / 3,
-          y: this.height / 2
-        },
-        "2009": {
-          x: this.width / 2,
-          y: this.height / 2
-        },
-        "2010": {
-          x: 2 * this.width / 3,
           y: this.height / 2
         }
       };
+      this.year_centers["out"] = this.year_centers.production;
       this.layout_gravity = -0.01;
       this.damper = 0.1;
       this.vis = null;
@@ -55,12 +54,66 @@
     }
 
     BubbleChart.prototype.create_nodes = function() {
-      this.data.forEach((function(_this) {
+      var _this = this;
+      var data = [
+        {
+          '1986': "production",
+          '2011': "out",
+          n: 78
+        },
+        {
+          '1986': "import",
+          '2011': "import",
+          n: 58
+        },
+        {
+          '1986': "production",
+          '2011': "production",
+          n: 20
+        },
+        {
+          '1986': "production",
+          '2011': "import",
+          n: 33
+        }
+      ]
+      var _i = 0;
+      data.forEach(function(row) {
+        for (var i=0; i < row.n; i++) {
+          var node = {
+            id: _i,
+            radius: _this.node_radius ,
+            '1986': row['1986'],
+            '2011': row['2011']
+          };
+
+          _this.nodes.push(node);
+          _i = _i + 1;
+        }
+      })
+      /*for (var i = 0; i < 20; i++) {
+        var nodeA = {
+          id: i,
+          year: "1986",
+          group: "import",
+          radius: this.node_radius
+        };
+        var nodeB = {
+          id: i + 200,
+          year: "2011",
+          group: "import",
+          radius: this.node_radius
+        };
+        this.nodes.push(nodeA);
+        this.nodes.push(nodeB);
+      }*/
+
+      /*this.data.forEach((function(_this) {
         return function(d) {
           var node;
           node = {
             id: d.id,
-            radius: _this.radius_scale(parseInt(d.total_amount)),
+            radius: _this.node_radius, //_this.radius_scale(parseInt(d.total_amount)),
             value: d.total_amount,
             name: d.grant_title,
             org: d.organization,
@@ -74,7 +127,7 @@
       })(this));
       return this.nodes.sort(function(a, b) {
         return b.value - a.value;
-      });
+      });*/
     };
 
     BubbleChart.prototype.create_vis = function() {
@@ -86,7 +139,7 @@
       that = this;
       this.circles.enter().append("circle").attr("r", 0).attr("fill", (function(_this) {
         return function(d) {
-          return _this.fill_color(d.group);
+          return "red";//;_this.fill_color(d.group);
         };
       })(this)).attr("stroke-width", 2).attr("stroke", (function(_this) {
         return function(d) {
@@ -94,11 +147,12 @@
         };
       })(this)).attr("id", function(d) {
         return "bubble_" + d.id;
-      }).on("mouseover", function(d, i) {
+      });
+      /*.on("mouseover", function(d, i) {
         return that.show_details(d, i, this);
       }).on("mouseout", function(d, i) {
         return that.hide_details(d, i, this);
-      });
+      })*/
       return this.circles.transition().duration(2000).attr("r", function(d) {
         return d.radius;
       });
@@ -136,6 +190,12 @@
     };
 
     BubbleChart.prototype.display_by_year = function() {
+      var _this = this;
+      this.circles.transition().duration(500).ease('<')
+      .attr("r", function(d) {
+        return d[_this.currentYear] == "out" ? 0 : _this.node_radius;
+      })
+      ;
       this.force.gravity(this.layout_gravity).charge(this.charge).friction(0.9).on("tick", (function(_this) {
         return function(e) {
           return _this.circles.each(_this.move_towards_year(e.alpha)).attr("cx", function(d) {
@@ -153,7 +213,10 @@
       return (function(_this) {
         return function(d) {
           var target;
-          target = _this.year_centers[d.year];
+          target = _this.year_centers[ d[_this.currentYear] ];
+          if (typeof target == "undefined") {
+            console.log(d);
+          }
           d.x = d.x + (target.x - d.x) * (_this.damper + 0.02) * alpha * 1.1;
           return d.y = d.y + (target.y - d.y) * (_this.damper + 0.02) * alpha * 1.1;
         };
@@ -163,9 +226,9 @@
     BubbleChart.prototype.display_years = function() {
       var years, years_data, years_x;
       years_x = {
-        "2008": 160,
-        "2009": this.width / 2,
-        "2010": this.width - 160
+        //"2008": 160,
+        "import": this.year_centers.import.x,
+        "egen produktion": this.year_centers.production.x
       };
       years_data = d3.keys(years_x);
       years = this.vis.selectAll(".years").data(years_data);
@@ -213,25 +276,25 @@
     render_vis = function(csv) {
       chart = new BubbleChart(csv);
       chart.start();
-      return root.display_all();
+      return root.display_year();
     };
+
     root.display_all = (function(_this) {
       return function() {
         return chart.display_group_all();
       };
     })(this);
+
     root.display_year = (function(_this) {
       return function() {
         return chart.display_by_year();
       };
     })(this);
+
     root.toggle_view = (function(_this) {
-      return function(view_type) {
-        if (view_type === 'year') {
-          return root.display_year();
-        } else {
-          return root.display_all();
-        }
+      return function(year) {
+        chart.currentYear = year;
+        chart.display_by_year();
       };
     })(this);
     return d3.csv("data/gates_money.csv", render_vis);

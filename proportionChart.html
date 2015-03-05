@@ -1,0 +1,98 @@
+<!doctype html>
+<!--[if lt IE 7]> <html class="no-js ie6 oldie" lang="en"> <![endif]-->
+<!--[if IE 7]>    <html class="no-js ie7 oldie" lang="en"> <![endif]-->
+<!--[if IE 8]>    <html class="no-js ie8 oldie" lang="en"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+  <title>Vår frukt kommer allt mer sällan från Sverige</title>
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+
+  <!-- CSS concatenated and minified via ant build script-->
+  <link rel="stylesheet" href="css/reset.css">
+  <link rel="stylesheet" href="css/bootstrap.min.css">
+  <!-- end CSS-->
+
+  <script src="js/libs/modernizr-2.0.6.min.js"></script>
+</head>
+
+<body>
+<h1>Hur mycket är xxx?</h1>
+<div id="vis"></div>
+<div class="sentence"></div>
+<button class="btn slide-nav" data-direction="-1">Tillbaka</button>
+<button class="btn slide-nav" data-direction="+1">Nästa</button>
+
+
+
+  <!-- <script src="//ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script> -->
+  <script>window.jQuery || document.write('<script src="js/libs/jquery-1.6.2.min.js"><\/script>')</script>
+
+  <script defer src="js/plugins.js"></script>
+  <script defer src="js/script.js"></script>
+  <script src="js/CustomTooltip.js"></script>
+  <script src="js/libs/d3.js"></script>
+  <script src="js/proportionChart.js"></script>
+  <script type="text/javascript">
+    $(document).ready(function() {
+        $(document).ready(function() {
+
+          var data = [
+            {
+              value: 20000,
+              name: 'Tankbil, 20 m3',
+              sentence: 'En tankbil rymmer ungefär 20.000 liter'
+            },
+            {
+              value: 112500,
+              name: 'Tvåa, 112 m3',
+              sentence: 'En tvåa på söder rymmer ungefär 112.500 liter'
+            },
+            {
+              value: 2500000,
+              name: 'OS-bassäng, 2.500 m3',
+              sentence: 'Och i en lång simbassäng i OS får 2,5 miljoner möjlkpaket plats.'
+            },
+            {
+              value: 317000000,
+              name: 'Bekämpningsmedel, 317.000 m3',
+              sentence: 'Och så här mycket rent bekämpningsmedel använder Argentina varje år.'
+            }
+          ]
+          var chart = new ProportionChart('#vis', data);
+          var $sentence = $('.sentence');
+          $('.slide-nav').click(function() {
+            var direction = $(this).attr('data-direction');
+            var newIndex = chart.selectedIndex + 1 * direction;
+            if (newIndex < chart.data.length && newIndex >= 0) {
+              chart.selectedIndex = chart.selectedIndex + 1 * direction;
+              chart.update();  
+              $sentence.html(data[newIndex].sentence);
+            }
+            return false;
+          });
+        });
+    });
+  </script>
+
+
+  <script>
+    /*window._gaq = [['_setAccount','UA-17355070-1'],['_trackPageview'],['_trackPageLoadTime']];
+    Modernizr.load({
+      load: ('https:' == location.protocol ? '//ssl' : '//www') + '.google-analytics.com/ga.js'
+    });*/
+  </script>
+
+
+  <!--[if lt IE 7 ]>
+    <script src="//ajax.googleapis.com/ajax/libs/chrome-frame/1.0.3/CFInstall.min.js"></script>
+    <script>window.attachEvent('onload',function(){CFInstall.check({mode:'overlay'})})</script>
+  <![endif]-->
+  
+</body>
+</html>

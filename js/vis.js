@@ -18,8 +18,8 @@
       this.create_nodes = __bind(this.create_nodes, this);
       var max_amount;
       this.data = data;
-      this.width = 540;
-      this.height = 400;
+      this.id = "#vis";
+      this.set_size();
       this.node_radius = this.width / 80;
       this.currentYear = "1986";
       this.tooltip = CustomTooltip("gates_tooltip", 240);
@@ -91,48 +91,15 @@
           _i = _i + 1;
         }
       })
-      /*for (var i = 0; i < 20; i++) {
-        var nodeA = {
-          id: i,
-          year: "1986",
-          group: "import",
-          radius: this.node_radius
-        };
-        var nodeB = {
-          id: i + 200,
-          year: "2011",
-          group: "import",
-          radius: this.node_radius
-        };
-        this.nodes.push(nodeA);
-        this.nodes.push(nodeB);
-      }*/
-
-      /*this.data.forEach((function(_this) {
-        return function(d) {
-          var node;
-          node = {
-            id: d.id,
-            radius: _this.node_radius, //_this.radius_scale(parseInt(d.total_amount)),
-            value: d.total_amount,
-            name: d.grant_title,
-            org: d.organization,
-            group: d.group,
-            year: d.start_year,
-            x: Math.random() * 900,
-            y: Math.random() * 800
-          };
-          return _this.nodes.push(node);
-        };
-      })(this));
-      return this.nodes.sort(function(a, b) {
-        return b.value - a.value;
-      });*/
     };
+    BubbleChart.prototype.set_size = function() {
+      this.width = d3.select(this.id)[0][0].offsetWidth;
+      this.height = this.width * .6;
+    }    
 
     BubbleChart.prototype.create_vis = function() {
       var that;
-      this.vis = d3.select("#vis").append("svg").attr("width", this.width).attr("height", this.height).attr("id", "svg_vis");
+      this.vis = d3.select(this.id).append("svg").attr("width", this.width).attr("height", this.height).attr("id", "svg_vis");
       this.circles = this.vis.selectAll("circle").data(this.nodes, function(d) {
         return d.id;
       });
@@ -263,6 +230,13 @@
       })(this));
       return this.tooltip.hideTooltip();
     };
+
+    BubbleChart.prototype.redraw = function() {
+        this.vis.remove();
+        this.set_size();
+        this.create_vis();
+        return self;
+      }
 
     return BubbleChart;
 

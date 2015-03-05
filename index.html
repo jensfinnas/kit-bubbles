@@ -24,18 +24,17 @@
 
 <body>
 
-  <div id="container" class="container">
-    <header>
-    <h1>Vår frukt kommer allt mer sällan från Sverige</h1>
-    </header>
-    <div id="main" role="main">
-      <div id="view_selection" class="btn-group">
-        <a href="#" id="1986" class="btn btn-lg active">1986</a>
-        <a href="#" id="2011" class="btn btn-lg">2011</a>
-      </div>
-      <div id="vis"></div>
-    </div>
-  </div> <!--! end of #container -->
+<h1>Vår frukt kommer allt mer sällan från Sverige</h1>
+<div id="vis"></div>
+<div class="sentence 1986">
+  <div>År 1986 var n/n äpplen som åts i Sverige inhemska.</div>
+  <button class="toggle btn" data-year="2011">Hur har läget förändrats?</button>
+</div>
+<div class="sentence 2011 hidden">
+  <div>År 2011 var det bara x/x.</div>
+  <button class="toggle btn" data-year="1986">Tillbaka</button>
+</div>
+
 
 
   <!-- <script src="//ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script> -->
@@ -49,11 +48,10 @@
   <script type="text/javascript">
     $(document).ready(function() {
         $(document).ready(function() {
-          $('#view_selection a').click(function() {
-            var view_type = $(this).attr('id');
-            $('#view_selection a').removeClass('active');
-            $(this).toggleClass('active');
-            toggle_view(view_type);
+          $('.toggle').click(function() {
+            var year = $(this).attr('data-year');
+            $('.sentence').toggleClass('hidden');
+            toggle_view(year);
             return false;
           });
         });
